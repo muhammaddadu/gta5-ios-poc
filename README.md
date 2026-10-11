@@ -1,6 +1,6 @@
 # GTA V local browser and iPhone proof of concept
 
-Original local tooling and instructions for evaluating a user-supplied compatible
+Original local tooling and instructions for evaluating a locally supplied compatible
 WebAssembly build in Chrome, then compiling a native iPhone application.
 **This repository contains no game build or assets. Neither gameplay nor an IPA is
 complete.** See [the measured status](docs/STATUS.md).
@@ -33,14 +33,41 @@ would not satisfy the requirement. The browser project's README documents its
 own download mechanism, but explicitly claims no redistribution licence for the
 game assets. We have not established an authorised source for that build.
 
-Supply files only when you have permission for the particular game code, prepared
-data and shaders. Record their source and the basis for permission privately in
-`.local/permissions.md`. Local storage, an upstream checksum, an MIT host licence
-and owning a retail copy do not establish rights to an unofficial compiled port.
-This project does not automate archive retrieval or link to game archive files.
+The owner has authorised acquiring the upstream files for this local POC. Keep
+all inputs and derivatives private under `.local/`; the Git exclusion applies to
+binaries, data, shaders, translated C and IPAs. POC status does not itself establish
+a distribution licence. No game archive files or downloader are committed here.
 See [sources and provenance](docs/SOURCES.md).
 
-After obtaining a compatible authorised build, copy it into:
+### Reproduce local-only acquisition
+
+The owner explicitly authorised this route for the private POC. These commands
+fetch the pinned helper and manifests into the ignored directory; inspect the
+helper before running it. Its source hash is recorded in `upstreams.json`.
+
+```sh
+mkdir -p .local
+PIN=1474b28dc56d25a3f4bebe11b8fc481a14bf736d
+for file in download_game.py download-manifest.json file-inventory.json; do
+  curl --fail --location "https://raw.githubusercontent.com/alihammoud21/playgta5/$PIN/$file" -o ".local/$file"
+done
+python3 scripts/acquire-local.py
+# If .local/game does not already exist, link to the acquired mirror.
+ln -s mirror/playgta5.com .local/game
+python3 scripts/verify_inventory.py
+python3 scripts/verify_assets.py
+```
+
+Four transfers run concurrently. Every archive and extracted game file is checked
+against upstream's manifest. The Windows runtime is skipped. Expect about 42 GB
+for retained verified archives plus extracted files; native dependencies/builds
+need more. Interrupted acquisition resumes partial transfers; existing differing
+files are rejected. Restarting the script requires a conservative free-space
+allowance for all archives/files again. Do not run two acquisition processes at
+the same time against the same cache. Published hashes establish matching bytes,
+not publisher trust, safety or gameplay.
+
+After obtaining a compatible build, copy it into:
 
 ```text
 .local/game/
@@ -85,8 +112,8 @@ or the entire `.local/` directory. Opening `index.html` directly is insufficient
 
 `verify_assets.py` checks minimum file structure, WASM magic and the supported
 engine fingerprint. It **does not verify all 21 GB** or detect every missing asset.
-Use an independently trusted, complete manifest from your authorised provider for
-full size/hash validation before claiming installation integrity. Do not treat
+Run `python3 scripts/verify_inventory.py` for full size/hash validation against the
+locally downloaded upstream inventory before claiming installation integrity. Do not treat
 file existence or a matching engine hash as complete asset verification.
 
 Follow [the gameplay checklist](docs/VALIDATION.md). Capture the first DevTools

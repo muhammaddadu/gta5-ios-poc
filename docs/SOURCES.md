@@ -2,7 +2,7 @@
 
 | Project | Direct source | Assessment |
 | --- | --- | --- |
-| Browser snapshot | [alihammoud21/playgta5](https://github.com/alihammoud21/playgta5) | README says a compiled snapshot, approximately 21.2 GB, Mac gameplay unvalidated by its author, no asset redistribution licence claimed. Reference scripts inspected locally; no game archives fetched. |
+| Browser snapshot | [alihammoud21/playgta5](https://github.com/alihammoud21/playgta5) | README says a compiled snapshot, approximately 21.2 GB, Mac gameplay unvalidated by its author, no asset redistribution licence claimed. Scripts inspected locally; owner subsequently authorised local-only release acquisition. |
 | Archived technical reference | [shadany7824/playgta5 engine investigation](https://github.com/shadany7824/playgta5/blob/main/ENGINE_INVESTIGATION.md) | Reports RAGE symbols and Windows development paths in the binary. These are provenance clues, not a retail-to-WASM recipe or permission. We did not clone its game snapshot. |
 | Primary native route | [kalki-kgp/gtav-native](https://github.com/kalki-kgp/gtav-native) | MIT host/tool code; user-supplied WASM/data/shaders; wasm2c → C → ARM64, Dawn on Metal, UIKit. App project inspected locally targets iOS 26.0. |
 | Alternative native route | [mempage4k/glue5](https://github.com/mempage4k/glue5) | Rust/wgpu runtime; prepared/re-keyed data required; retail files alone insufficient. Engine hash validation in build script. No root licence found at inspected revision. |
@@ -28,3 +28,13 @@ permission for the supported compiled port and prepared assets from their rights
 holders, or use a reproducible port with a demonstrated lawful input workflow.
 Keeping derivatives out of Git prevents redistribution through this repository;
 it does not settle the legality of acquiring or using the inputs locally.
+
+## Owner's local POC decision
+
+The owner subsequently authorised local acquisition and stated licensing review is
+not a prerequisite for this POC. Acquisition uses the browser upstream's pinned
+release manifest and reviewed downloader, with four concurrent transfers and
+archive/per-file checksum validation. All release files, manifests, original
+upstream helper and derived output remain under ignored `.local/`. This changes
+the acquisition plan; it does not introduce game files into Git or a redistribution
+permission claim.
