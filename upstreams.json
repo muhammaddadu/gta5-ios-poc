@@ -30,5 +30,11 @@
     "build": "8b0b5899ed",
     "sha256": "11ca8d2c04c5e843d18ff4aea4899d72c86973c6b031df334e67c446b2ae83e0",
     "note": "Compatibility fingerprint from Glue5; not permission or proof of safety"
+  },
+  "glue5_integration": {
+    "url": "https://github.com/mempage4k/glue5.git",
+    "commit": "c7df60a8390427a73e142685b2438f29b7214908",
+    "rust": "1.99.0",
+    "note": "Integrated as update to existing app; source/checkouts and derivatives remain ignored."
   }
 }

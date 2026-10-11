@@ -10,6 +10,9 @@ Start with **[the numbered step-by-step reproduction guide](docs/STEP_BY_STEP.md
 for a fresh setup from this repository through Chrome gameplay, signing, IPA export,
 phone transfer and native gameplay validation.
 
+The **[Glue 5 app upgrade](docs/GLUE5_UPGRADE.md)** integrates improved mobile controls,
+settings, upscaling and frame pacing while retaining the existing app data.
+
 Everything for this workspace lives under this directory. Private inputs,
 third-party checkouts and outputs live under ignored `.local/`. Only original
 source, documentation and synthetic tests are committed. No remote is configured.
