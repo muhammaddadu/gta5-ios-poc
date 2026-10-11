@@ -6,6 +6,10 @@ WebAssembly build in Chrome, then compiling a native iPhone application.
 signed development IPA exported and native phone gameplay confirmed.** See [the measured status](docs/STATUS.md)
 for the completed phone installation/gameplay evidence and remaining test limits.
 
+Start with **[the numbered step-by-step reproduction guide](docs/STEP_BY_STEP.md)**
+for a fresh setup from this repository through Chrome gameplay, signing, IPA export,
+phone transfer and native gameplay validation.
+
 Everything for this workspace lives under this directory. Private inputs,
 third-party checkouts and outputs live under ignored `.local/`. Only original
 source, documentation and synthetic tests are committed. No remote is configured.
