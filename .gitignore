@@ -1,0 +1,22 @@
+# All third-party checkouts, inputs, derivatives and private outputs stay here.
+.local/
+.env
+.env.*
+__pycache__/
+*.pyc
+*.wasm
+*.ipa
+*.a
+*.o
+*.dylib
+*.zip
+*.7z
+*.rar
+*.rpf
+*.wgsl
+*.p12
+*.pem
+*.mobileprovision
+*.xcarchive/
+*.xcconfig
+.DS_Store

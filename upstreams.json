@@ -1,0 +1,9 @@
+{
+  "reviewed": "2026-10-11",
+  "browser_reference": {"url": "https://github.com/alihammoud21/playgta5", "commit": "1474b28dc56d25a3f4bebe11b8fc481a14bf736d", "action": "reference only; no game downloads"},
+  "native": {"url": "https://github.com/kalki-kgp/gtav-native.git", "commit": "07815b4c7d8fd6592bf6d672243ce6a0348016f3", "license": "MIT (host/tool code only)"},
+  "wabt": {"url": "https://github.com/WebAssembly/wabt.git", "commit": "b835f1ce49e5803c597a0548099456d6be1d3d11"},
+  "dawn": {"url": "https://dawn.googlesource.com/dawn", "commit": "b73d662f73d57bb42209546910666a38e6db95a1"},
+  "glue5_reference": {"url": "https://github.com/mempage4k/glue5", "commit": "0ece6f30f74e5527ee4f25efedebbdf18b046b80", "action": "alternative, upstream checkout only; no root license file observed"},
+  "engine": {"build": "8b0b5899ed", "sha256": "11ca8d2c04c5e843d18ff4aea4899d72c86973c6b031df334e67c446b2ae83e0", "note": "Compatibility fingerprint from Glue5; not permission or proof of safety"}
+}
