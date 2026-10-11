@@ -30,3 +30,41 @@ the actual configuration/build command, not a mocked test.
 Private logs: `.local/dawn-config-repro.log`, `.local/prepare-renderer.log` and
 `.local/prepare-renderer-retry.log`. Completion of the renderer archive and native
 host is recorded separately in `STATUS.md` once measured.
+
+## Xcode generic iOS destination unavailable
+
+The engine and Metal libraries both compiled with the iPhoneOS compiler SDK, but
+`export-ipa.sh` then failed before app compilation:
+
+```text
+Any iOS Device ... error:iOS 26.4 is not installed.
+Please download and install the platform from Xcode > Settings > Components.
+```
+
+`xcodebuild -showsdks` listed iPhoneOS 26.4, and first-launch status was complete.
+`xcodebuild -showdestinations` reproduced the ineligible generic device destination.
+The official `xcodebuild -downloadPlatform iOS -architectureVariant arm64` command
+was started; it selected Apple's iOS 26.4.1 simulator component, approximately
+8.46 GB. Similar generic-device errors resolved by that command are documented in
+[this Apple Developer Forums thread](https://developer.apple.com/forums/thread/739798).
+Its outcome on this Mac must be verified by repeating `-showdestinations` and the
+archive, not assumed from download completion alone.
+
+A direct unsigned `-target GTA -sdk iphoneos` build reached the asset catalogue
+compiler and reproduced the component gap more precisely: no matching simulator
+runtime was available for SDK build `23E252`. Existing runtimes listed in that error
+were other SDK builds. We kept the original icon/resource build and continued the
+official matching-runtime installation rather than removing resources to mask it.
+
+## Early phone launch while data is still transferring
+
+The installed app can be opened before the large data copy completes. On this
+phone it displayed “Game data not found” while `Documents/data/manifest.json`
+was still absent. The correct `Documents/data` and `Documents/shaders` folders
+were present; a device inventory showed the data copy was only about 59% complete.
+
+The UIKit shell checks the paths at its initial startup and retains that missing
+state. A normal process-launch request can merely bring the existing app forward.
+Our install helper now uses `--terminate-existing` after both transfers complete,
+so an early launch is restarted and the newly copied paths are checked again.
+This changes only the POC app process; it does not reinstall or delete its data.

@@ -2,8 +2,9 @@
 
 Original local tooling and instructions for evaluating a locally supplied compatible
 WebAssembly build in Chrome, then compiling a native iPhone application.
-**This repository contains no game build or assets. Neither gameplay nor an IPA is
-complete.** See [the measured status](docs/STATUS.md).
+**Git contains no game build or assets. Chrome 3D gameplay has been verified and a
+signed development IPA exported and native phone gameplay confirmed.** See [the measured status](docs/STATUS.md)
+for the completed phone installation/gameplay evidence and remaining test limits.
 
 Everything for this workspace lives under this directory. Private inputs,
 third-party checkouts and outputs live under ignored `.local/`. Only original
@@ -11,7 +12,7 @@ source, documentation and synthetic tests are committed. No remote is configured
 
 ## Prerequisites
 
-Apple Silicon Mac, Python 3.11+, current Chrome, full Xcode and enough free space.
+Apple Silicon Mac, Python 3.11+, current Chrome, full Xcode with its iOS platform component, and enough free space.
 The browser data is approximately 21 GB according to upstream; native builds need
 additional space for dependencies, generated C, object files and archives. Start
 with at least 80 GB free as a planning allowance, not a measured build peak.
@@ -20,6 +21,8 @@ with at least 80 GB free as a planning allowance, not a measured build peak.
 cd /path/to/gta5
 python3 --version
 xcodebuild -version
+# If Xcode reports its iOS platform is missing for a generic device archive:
+xcodebuild -downloadPlatform iOS -architectureVariant arm64
 brew install cmake ninja xcodegen
 bash scripts/install-hooks.sh
 ```
@@ -132,16 +135,16 @@ support merely because the engine library compiles.
 # This stage needs no game assets; clones pinned source and builds patched wasm2c.
 JOBS=4 bash scripts/prepare-native.sh
 
-# Requires the compatible, authorised input set; fails before expensive work if absent.
+# Requires the compatible local input set; fails before expensive work if absent.
 JOBS=4 bash scripts/build-engine.sh
 ```
 
 The latter prepares pinned Dawn with upstream's iOS BC-texture patch, builds Metal
 support, translates WASM into C and compiles ARM64 `libgta.a`. All derivatives stay
 under `.local/upstream/gtav-native/`. The native build can take considerable time
-and memory; reduce `JOBS` if this Mac becomes memory constrained. The Dawn/game
-stages have not been executed here because inputs are missing. Integration fixes
-may still be required; the wrapper is not evidence that these stages compile.
+and memory; reduce `JOBS` if this Mac becomes memory constrained. The Dawn renderer and complete iPhone engine library have now compiled on this
+Mac. See `docs/BUILD_FIXES.md` for the missing Apple CMake toolchain step that was
+resolved during the real build. Runtime compatibility still requires gameplay.
 
 In Xcode → Settings → Accounts, configure your Apple developer account and iOS
 signing. A Mac Developer ID certificate is not an iOS development certificate.
@@ -173,30 +176,39 @@ external data/shaders are absent. Keep the IPA, translated C, objects, libraries
 and archive private and ignored. Do not publish them or upload them to GitHub
 Actions, Releases or any cloud compiler.** A signed IPA is not proof of gameplay.
 
-### Install on your iPhone 16 Pro
+### Install on the connected iPhone
 
-1. Connect the iPhone by USB, unlock and trust the Mac. Enable Developer Mode if
-   Xcode requests it. Check `xcrun devicectl list devices` for an available device.
-2. Open `.local/upstream/gtav-native/ios/app/GTA.xcodeproj` in Xcode. Select the
-   `GTA` scheme and your phone, check the same team/bundle ID, then Run. Alternatively
-   install the exported development IPA through Xcode → Window → Devices and
-   Simulators → your device → Installed Apps → `+`.
-3. Use Finder → iPhone → Files → GTA to copy the complete `data` folder and
-   `b/8b0b5899ed/shaders` folder into the app's Documents container as **`data` and
-   `shaders`**, respectively. Do not place `b/` in Documents for this runtime.
-4. Confirm `Documents/data` and `Documents/shaders` exist using Xcode's container
-   view/download if available, then launch and follow the gameplay checklist.
-
-The device transfer is approximately 21 GB. Check available iPhone storage first.
-For an advanced direct installation of the signed app inside the archive:
+The intended phone was described as an iPhone 16 Pro; device inspection identifies
+the connected phone as an **iPhone 15 Pro on iOS 27.2**. Record your actual device
+rather than relying on a remembered model. Developer Mode was already enabled.
 
 ```sh
-xcrun devicectl device install app --device YOUR_DEVICE_IDENTIFIER \
-  .local/dist/GTA.xcarchive/Products/Applications/GTA.app
+xcrun devicectl list devices
+DEVICE_ID="YOUR_DEVICE_IDENTIFIER" bash scripts/install-ios.sh
 ```
 
-A development IPA is for your provisioned devices. Export/install failure is a
-signing or integration blocker to diagnose, not a reason to fabricate an IPA.
+The helper verifies the local engine and app signature, installs the signed app,
+copies shaders to **Documents/shaders** and game data to **Documents/data**, then
+terminates an existing instance and launches the app again. The transfer is about
+21 GB and can take many minutes over USB. Keep the phone connected. Opening the
+app before the transfer finishes can show “Game data not found”; a relaunch after
+completion makes it check the folders again. This is not the Glue5 folder layout.
+
+The copied game data remains on the phone and under `.local/game` on the Mac.
+Confirm the file inventory and actual 3D world, input and audio. A successful copy
+or launch response alone does not prove gameplay.
+
+For manual installation, use Xcode → Window → Devices and Simulators → your device
+→ Installed Apps → `+` with the exported development IPA, or open the generated
+project and select the connected phone. Use the same unique bundle identifier and
+verified Apple account/team as the export. Finder → iPhone → Files → GTA can copy
+the two game folders into Documents if you are not using the helper.
+
+The export wrapper generates a private `project.poc.yml` with your bundle ID, so
+opening the generated Xcode project does not fall back to upstream's already-taken
+`dev.kalki.gta`. Use a fresh suffix if Apple says your chosen identifier is not
+available. The concrete account, bundle ID and provisioning details are private
+in `.local/`, never in Git.
 
 ### Alternative: Glue 5
 

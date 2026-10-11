@@ -4,7 +4,9 @@
     "url": "https://github.com/alihammoud21/playgta5",
     "commit": "1474b28dc56d25a3f4bebe11b8fc481a14bf736d",
     "action": "reference and local-only release acquisition; no game files in Git",
-    "downloader_sha256": "7e44e96f70421fa74deedd70b5ec89f612d553c5ac3b620fd6e09469f890ebe8"
+    "downloader_sha256": "7e44e96f70421fa74deedd70b5ec89f612d553c5ac3b620fd6e09469f890ebe8",
+    "download_manifest_sha256": "83a2865640038e07352e554f7bebf78ce3fbdb49235714e5d69af06e7c4082ae",
+    "file_inventory_sha256": "6def50e4232646763c1ad4c7e317a5afbd884b81c428e46f975ca7f58ee1d835"
   },
   "native": {
     "url": "https://github.com/kalki-kgp/gtav-native.git",

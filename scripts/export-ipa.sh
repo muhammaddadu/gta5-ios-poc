@@ -24,9 +24,20 @@ png = b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', size, size, 
 Path('App/Assets.xcassets/AppIcon.appiconset/icon-1024.png').write_bytes(png)
 PY
 fi
-xcodegen generate
+# Generate a private spec with the same bundle ID the archive uses, so Xcode Run works too.
+python3 - "$BUNDLE_ID" <<'PYPROJECT'
+from pathlib import Path
+import re, sys
+source = Path('project.yml').read_text()
+changed, count = re.subn(r'(?m)^(\s*PRODUCT_BUNDLE_IDENTIFIER:)\s*\S+', lambda m: m[1] + ' ' + sys.argv[1], source)
+assert count == 1
+Path('project.poc.yml').write_text(changed)
+PYPROJECT
+xcodegen generate --spec project.poc.yml
 xcodebuild -project GTA.xcodeproj -scheme GTA -configuration Release \
   -destination 'generic/platform=iOS' -archivePath "$OUT/GTA.xcarchive" \
+  -derivedDataPath "$ROOT/.local/xcode-derived" \
+  -resultBundlePath "$OUT/archive-$(date -u +%Y%m%dT%H%M%SZ).xcresult" \
   -allowProvisioningUpdates DEVELOPMENT_TEAM="$TEAM_ID" PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" archive
 python3 - "$OUT/ExportOptions.plist" "$TEAM_ID" <<'PY'
 import plistlib, sys

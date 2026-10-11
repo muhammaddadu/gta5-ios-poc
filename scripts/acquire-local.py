@@ -17,6 +17,10 @@ def main():
     actual = hashlib.sha256(helper.read_bytes()).hexdigest()
     if actual != lock['browser_reference']['downloader_sha256']:
         raise ValueError('Upstream downloader differs from reviewed source')
+    for name in ['download-manifest.json', 'file-inventory.json']:
+        key = name.replace('.json', '').replace('-', '_') + '_sha256'
+        if hashlib.sha256((LOCAL / name).read_bytes()).hexdigest() != lock['browser_reference'][key]:
+            raise ValueError('Manifest differs from pinned source: ' + name)
     spec = importlib.util.spec_from_file_location('reviewed_downloader', helper)
     upstream = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(upstream)
