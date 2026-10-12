@@ -15,7 +15,8 @@ settings, upscaling and frame pacing while retaining the existing app data.
 
 Everything for this workspace lives under this directory. Private inputs,
 third-party checkouts and outputs live under ignored `.local/`. Only original
-source, documentation and synthetic tests are committed. No remote is configured.
+source, documentation and synthetic tests are committed. The source repository is
+[github.com/muhammaddadu/gta5-ios-poc](https://github.com/muhammaddadu/gta5-ios-poc).
 
 ## Prerequisites
 

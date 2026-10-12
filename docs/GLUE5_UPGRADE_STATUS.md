@@ -50,4 +50,5 @@ owner subsequently unlocked/opened it and confirmed gameplay.
 Long-session temperature/frame consistency, real controllers, save/reload,
 background/foreground behaviour and full mission coverage remain untested for the
 new runtime. The browser server remains stopped. All third-party code, assets,
-builds, logs and signing material stay ignored under .local/. Nothing is pushed.
+builds, logs and signing material stay ignored under .local/. Only original source,
+tests and documentation are published to the owner's GitHub repository.
