@@ -38,3 +38,35 @@ class IntegrationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             for team,bundle in [('bad','com.valid.app'),('ABCDEFGHIJ','not a bundle')]:
                 with self.assertRaises(ValueError): integration.project(Path(temp),team,bundle)
+
+    def test_project_keeps_versions_explicit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            ios=root/'platform/ios';ios.mkdir(parents=True)
+            # Original synthetic XcodeGen spec exercising the real project-generation seam.
+            spec='settings:\n  PRODUCT_NAME: Example\n  PRODUCT_BUNDLE_IDENTIFIER: local.example\n  DEVELOPMENT_TEAM: ${TEAM}\n  MARKETING_VERSION: 0.1\n  CURRENT_PROJECT_VERSION: 1\n  ASSETCATALOG_COMPILER_APPICON_NAME: Example\nsources:\n  - path: ../shared/Example.icon\ninfo:\n  properties:\n    CFBundleDisplayName: Example\n'
+            (ios/'project.yml').write_text(spec)
+            integration.project(root,'ABCDEFGHIJ','com.example.poc')
+            result=(ios/'project.poc.yml').read_text()
+            self.assertIn('CFBundleShortVersionString: $(MARKETING_VERSION)',result)
+            self.assertIn('CFBundleVersion: $(CURRENT_PROJECT_VERSION)',result)
+            self.assertIn('CURRENT_PROJECT_VERSION: 3',result)
+            self.assertIn('MARKETING_VERSION: 1.1',result)
+
+    def test_all_modes_reach_engine_and_patch_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);base=root/'crates/glue5/src';(base/'ui').mkdir(parents=True)
+            fixtures={
+                'settings.rs': '    pub game_dir: Option<PathBuf>,\n            game_dir: None,',
+                'ui/pages.rs': '    status: &Status,\n    starting: bool,\n                                ui.add_enabled_ui(status.game_dir.is_some() && !starting, |ui| {',
+                'ui.rs': 'start_page(&ctx, status, starting, &mut actions, &mut go)',
+                'app.rs': "/// Story mode (the browser page's start choice 1).\nconst START_MODE: u32 = 1;\nstart_mode: START_MODE,",
+            }
+            for name,text in fixtures.items(): (base/name).write_text(text)
+            integration.patch_modes(root)
+            first={name:(base/name).read_text() for name in fixtures}
+            integration.patch_modes(root)
+            self.assertEqual(first,{name:(base/name).read_text() for name in fixtures})
+            self.assertIn('start_mode: s.start_mode.clamp(1, 3)',first['app.rs'])
+            self.assertIn('(1, "Story"), (2, "Playground · GTA V"), (3, "Playground · Test map")',first['ui/pages.rs'])
+            self.assertIn('pub start_mode: u32',first['settings.rs'])

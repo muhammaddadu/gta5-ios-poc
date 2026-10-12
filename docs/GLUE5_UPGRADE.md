@@ -1,6 +1,6 @@
 # GTA V app upgrade using Glue 5
 
-[Current validation and signing status](GLUE5_UPGRADE_STATUS.md).
+[Current validation status](GLUE5_UPGRADE_STATUS.md).
 
 This upgrade integrates Glue 5 into the existing GTA V app identity. It retains
 the bundle identifier, display name, original blue icon and on-device container.
@@ -10,6 +10,8 @@ remain ignored under `.local/`.
 
 ## Features and mobile defaults
 
+- Home-screen mode selection: Story, Playground on the GTA V map, and Playground
+  on the test map. The selection is remembered; reopen the app to change modes.
 - Virtual gamepad touch controls: analog movement/camera, controller prompts and
   aim assist through the engine's pad input, plus real controller support.
 - In-game settings for controls, opacity/size, frame rate, scaling, VSync and memory.
@@ -25,7 +27,8 @@ remain ignored under `.local/`.
 
 Settings remain adjustable. These defaults target the tested iPhone 15 Pro and
 avoid assuming a peak frame-rate sample is sustainable. Graphics quality and
-performance still require testing in the updated runtime on the actual phone.
+sustained performance still require longer testing. The owner confirmed updated
+world rendering, touch controls, sound and Settings on the phone.
 
 ## Existing data and saves
 
@@ -84,7 +87,10 @@ copies data and shaders again. An already-populated container needs only the app
 update above. For a fresh installation, use that helper to populate the legacy
 layout, which the integrated runtime supports.
 
-Verify Ready on the start screen, open Settings before Play, then test:
+Verify Ready on the start screen, choose a game mode, and open Settings before
+Play. Story runs the engine's Story mode; Playground offers the GTA V map or the
+experimental test map. Reopen the app to switch modes because the engine cannot
+restart within the same process. Then test:
 
 1. Touch movement/camera together, face/shoulder buttons, entering/driving a car.
 2. Settings gear access during gameplay; touch size/opacity and Auto/Always/Off.
@@ -107,12 +113,13 @@ Do not delete or overwrite save files automatically if either runtime rejects th
 
 ## Validation records
 
-- All 14 repository tests pass, including adapter idempotence/drift checks.
-- `python3 scripts/test-glue5-compat.py` runs Rust tests against the actual modified layout module verifies
+- All 16 repository tests pass, including adapter idempotence/drift checks.
+- `python3 scripts/test-glue5-compat.py` runs Rust tests against the actual modified layout module; it verifies
   modern and legacy folders and rejects a missing data manifest.
 - iPhone ARM64 runtime compilation passed after correcting SDL's borrowed-path
-  return type. Build/signing/device/UX outcomes are recorded separately as they
-  complete; a compiler pass is not proof of phone gameplay.
+  return type. Archive, signing, export and installation passed. The owner confirmed world,
+  controls, sound and Settings on build 2; the mode-selector correction is tracked
+  separately in the status document.
 - Private logs: `.local/glue5-build.log`, `.local/glue5-build-retry.log`,
   `.local/glue5-ux-build.log`, `.local/glue5-export.log` and the upgrade backup log.
 

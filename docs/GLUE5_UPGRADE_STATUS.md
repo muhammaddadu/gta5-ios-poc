@@ -1,37 +1,53 @@
-# Integrated app status — 11 October 2026
+# Integrated app status — 12 October 2026
 
-The Glue5 runtime has been integrated into a local update of the existing GTA V
-app. The old working app and IPA have not been replaced yet.
+The Glue5 runtime update is signed and installed over the existing GTA V app,
+using the same bundle ID, Apple team and on-device data container.
 
-Implemented in the reproducible integration/build scripts:
+## Confirmed on the phone
 
-- Pinned Glue5 revision and Rust compiler.
-- Original app name/icon and the installed app's existing bundle ID.
-- Legacy phone data/shader lookup and original Documents/userdata save location.
-- Low-memory first-launch profile, approximately 640-line initial scene rendering,
-  MetalFX spatial upscaling, frame pacing and in-game settings from Glue5.
-- Analog virtual gamepad, real pad input/prompts/aim assist, native text entry,
-  adaptive touch visibility and adjustable control size/opacity from Glue5.
-- Original mobile refinements: minimum 44-point button hit areas, GTA V start title,
-  human-readable storage status, and manifest-gated Play readiness.
+Version 1.1, build 2 was exported and installed successfully. The owner confirmed
+that the 3D world, movement/camera controls, sound and Settings work. Device process
+inspection also confirmed GTA was running. This is gameplay validation, not a
+sustained performance benchmark.
 
-Validated:
+The owner then reported missing Playground and other mode choices. Investigation
+found the pinned Glue5 host hard-coded engine start mode 1 (Story). The original
+adapter now restores a persisted home-screen selector for Story (1), Playground
+on the GTA V map (2), and Playground on the test map (3). These numbers follow the
+existing engine input contract. Version 1.1, build 3 contains this correction. Its ARM64 build, archive, strict
+signature verification, IPA export and installation passed. Selector visibility
+and Playground gameplay are awaiting the owner's device check. The test-map
+mode is available but has not been validated on this phone.
 
-- Patched compiler/dependencies prepared and device ARM64 runtime compiled.
-- Fourteen repository tests passed.
-- Tests against actual modified Rust code passed for modern/legacy game layout,
-  incomplete data rejection and minimum touch-target sizing.
-- Existing phone userdata backed up: .local/upgrade-backups/userdata-before-glue5.
-- Original working IPA remains .local/dist/export/GTA.ipa.
+## Implemented
 
-Current blocker: macOS is waiting for the owner's keychain approval for codesign.
-The system signing prompt needs the Mac login password entered locally, not in a
-chat or command. Installation and physical-device UX/gameplay checks have not yet
-been completed for this update. Do not treat compiled code as improved gameplay
-or measured performance. The previous phone validation applies to the old port.
+- Pinned Glue5 revision and Rust compiler, original GTA app identity/icon.
+- Existing Documents/data, Documents/shaders and Documents/userdata compatibility.
+- Low-memory first-launch profile and approximately 640-line initial rendering.
+- Glue5 analog touch/gamepad input, settings, native text entry, MetalFX spatial
+  scaling, pipeline caches and frame pacing.
+- Original minimum 44-point button hit areas, readable storage status,
+  manifest-gated readiness and restored mode selection.
+- Explicit exported version/build metadata rather than XcodeGen's default 1.0/1.
 
-Once signing finishes, rebuild/archive the final UX changes, verify the new IPA,
-install over the same app ID, and test the start page/settings/touch/gamepad/scaling
-and sustained performance. Do not uninstall the existing app or re-copy its assets
-unless verification establishes that they are missing. See GLUE5_UPGRADE.md for
-build, installation and rollback instructions.
+## Verification and private outputs
+
+- Device ARM64 compile, archive, strict signature verification and IPA export passed.
+- Sixteen repository tests passed, including mode propagation and adapter idempotence.
+- Actual modified Rust compatibility tests passed for modern/legacy folders,
+  missing-manifest rejection and minimum touch targets.
+- Original IPA retained: .local/dist/export/GTA.ipa.
+- Updated IPA: .local/dist/glue5/export/GTA.ipa.
+- Save backup: .local/upgrade-backups/userdata-before-glue5 (15 files).
+- Private build/install logs: .local/glue5-export-versioned.log,
+  .local/glue5-install-final.log, .local/glue5-modes-build.log and
+  .local/glue5-modes-install.log.
+
+The earlier keychain signing failure is resolved; a fresh signing attempt succeeded.
+A launch attempt while the phone was locked failed before starting the app; the
+owner subsequently unlocked/opened it and confirmed gameplay.
+
+Long-session temperature/frame consistency, real controllers, save/reload,
+background/foreground behaviour and full mission coverage remain untested for the
+new runtime. The browser server remains stopped. All third-party code, assets,
+builds, logs and signing material stay ignored under .local/. Nothing is pushed.

@@ -91,6 +91,40 @@ def patch(root):
     app_lib.write_text(text)
 
 
+
+def patch_modes(root):
+    """Restore the engine's three launch choices omitted by the pinned host."""
+    def replace(path, old, new):
+        text = path.read_text()
+        if new in text:
+            return
+        if text.count(old) != 1:
+            raise ValueError('Expected one launch-mode seam: ' + str(path))
+        path.write_text(text.replace(old, new))
+    base = root / 'crates/glue5/src'
+    replace(base/'settings.rs', '    pub game_dir: Option<PathBuf>,',
+            '    pub game_dir: Option<PathBuf>,\n    /// GTA_POC_MODES: engine launch choice, persisted with app settings.\n    pub start_mode: u32,')
+    replace(base/'settings.rs', '            game_dir: None,',
+            '            game_dir: None,\n            start_mode: 1,')
+    replace(base/'ui/pages.rs', '    status: &Status,\n    starting: bool,',
+            '    status: &Status,\n    settings: &mut Settings,\n    starting: bool,')
+    replace(base/'ui/pages.rs', '                                ui.add_enabled_ui(status.game_dir.is_some() && !starting, |ui| {',
+            '                                ui.add_enabled_ui(status.game_dir.is_some() && !starting, |ui| {\n'
+            '                                    ui.label("Game mode");\n'
+            '                                    for (mode, label) in [(1, "Story"), (2, "Playground · GTA V"), (3, "Playground · Test map")] {\n'
+            '                                        if ui.add_sized([menu_width, 44.0 * scale], egui::Button::new(label).selected(settings.start_mode == mode)).clicked() {\n'
+            '                                            settings.start_mode = mode;\n'
+            '                                        }\n'
+            '                                    }\n'
+            '                                    ui.label(RichText::new("Choose a mode, then Play. Reopen the app to switch modes.").small().color(theme::MUTED));')
+    replace(base/'ui.rs', 'start_page(&ctx, status, starting, &mut actions, &mut go)',
+            'start_page(&ctx, status, settings, starting, &mut actions, &mut go)')
+    replace(base/'app.rs', 'start_mode: START_MODE,',
+            'start_mode: s.start_mode.clamp(1, 3),')
+    replace(base/'app.rs', '/// Story mode (the browser page\'s start choice 1).\nconst START_MODE: u32 = 1;\n',
+            '// GTA_POC_MODES: the home selection supplies the engine launch mode.\n')
+
+
 def project(root, team, bundle):
     if not re.fullmatch(r'[A-Z0-9]{10}', team):
         raise ValueError('Invalid Team ID')
@@ -99,10 +133,14 @@ def project(root, team, bundle):
     source = (root / 'platform/ios/project.yml').read_text()
     for key, value in [('PRODUCT_NAME', 'GTA'), ('PRODUCT_BUNDLE_IDENTIFIER', bundle),
                        ('DEVELOPMENT_TEAM', team), ('CFBundleDisplayName', 'GTA V'),
-                       ('CURRENT_PROJECT_VERSION', '2'), ('MARKETING_VERSION', '1.1'), ('ASSETCATALOG_COMPILER_APPICON_NAME', 'AppIcon')]:
+                       ('CURRENT_PROJECT_VERSION', '3'), ('MARKETING_VERSION', '1.1'), ('ASSETCATALOG_COMPILER_APPICON_NAME', 'AppIcon')]:
         source, count = re.subn(r'(?m)^(\s*'+key+r':)\s*[^\n]+', lambda m: m[1]+' '+value, source)
         if count != 1:
             raise ValueError('Expected one project setting: '+key)
+    source, count = re.subn(r'(?m)^(\s*)CFBundleDisplayName: GTA V$',
+        lambda m: m[0]+'\n'+m[1]+'CFBundleShortVersionString: $(MARKETING_VERSION)\n'+m[1]+'CFBundleVersion: $(CURRENT_PROJECT_VERSION)', source)
+    if count != 1:
+        raise ValueError('Expected one Info.plist version seam')
     source, count = re.subn(r'(?m)^(\s*- path:)\s*\.\./shared/[^\n]+',
                            lambda m: m[1]+' Assets.xcassets', source)
     if count != 1:
@@ -130,5 +168,6 @@ if __name__ == '__main__':
     parser.add_argument('--bundle', required=True)
     args = parser.parse_args()
     patch(args.root)
+    patch_modes(args.root)
     project(args.root, args.team, args.bundle)
     print('Applied app identity, existing game/save layout, and conservative iOS defaults.')
