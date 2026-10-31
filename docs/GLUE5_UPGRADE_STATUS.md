@@ -1,3 +1,51 @@
+# Duo build prepared — 31 October 2026
+
+Version **1.1, build 4** compiled for iPhone ARM64, archived, development-signed
+and exported using **Xcode 27.2 / iOS SDK 27.2** on macOS 27.2. Both the archive
+and the app extracted from the IPA passed strict signature verification. The
+exported ZIP passed integrity validation.
+
+Private prepared output: `.local/dist/duo/GTA-Duo-1.1-build4.ipa` (40,578,175 bytes).
+The standard latest output is `.local/dist/glue5/export/GTA.ipa`. The original
+baseline IPA remains `.local/dist/export/GTA.ipa`.
+
+Implemented: full-window landscape scene, portrait scene above a lower touch deck,
+controller-driven reclamation of the full window, live-window back-buffer resizing,
+readable portrait home/settings, minimum 44-point settings/button targets,
+30 FPS initial mobile cap, MetalFX and low-memory scene workload limit around
+1.5 million pixels. New mobile settings start with 80% touch opacity; existing
+saved settings remain adjustable and are not overwritten automatically.
+
+Checks passed:
+
+- 17 repository tests.
+- 20 native UI/input/settings tests using the actual modified modules with
+  synthetic platform/input seams; simultaneous sticks/action, quick triggers,
+  layout-transition release, target sizing and scrolling covered.
+- 9 resize/presentation/workload checks, plus 2 layout/touch compatibility checks.
+  Some geometry tests intentionally overlap between these harnesses.
+- Pristine pinned checkout produces the same Rust files as the validated checkout;
+  repeated application preserves their bytes.
+- Native control/page vector output inspected at portrait/landscape/compact sizes.
+  Preview scenes are synthetic and are not gameplay evidence.
+
+**Duo installation is in progress.** The intended phone has been reconnected;
+Developer Mode and Xcode 27.2 developer disk image services are available. Its
+UDID is not in the current development profile. The targeted `DEVICE_ID` build
+compiled successfully, then provisioning stopped with `No Accounts`: Xcode has
+no signed-in Apple account after the upgrade. Local account sign-in is required
+before registration, refreshed export and installation. The prepared IPA must
+not be described as already provisioned for that phone.
+
+Physical fold transitions, thumb comfort, sustained FPS/temperature, actual Duo
+gameplay and save/reload still require the phone. No such results are claimed.
+The earlier confirmed gameplay below applies to the original iPhone and older
+build, not the new Duo candidate. No phone assets were changed in this preparation.
+
+See [Duo experience and review](DUO_EXPERIENCE.md) and [Duo setup](IPHONE_DUO.md).
+
+---
+
 # Integrated app status — 12 October 2026
 
 The Glue5 runtime update is signed and installed over the existing GTA V app,

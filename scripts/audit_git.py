@@ -5,7 +5,7 @@ import re
 import subprocess
 import sys
 
-ALLOWED = {'.gitignore', 'AGENTS.md', 'README.md', 'upstreams.json'}
+ALLOWED = {'.gitignore', 'AGENTS.md', 'README.md', 'upstreams.json', 'scripts/duo-layout.rs'}
 EXTENSIONS = {'scripts': {'.py', '.sh'}, 'tests': {'.py'},
               'docs': {'.md'}, 'web': {'.html', '.js'}}
 

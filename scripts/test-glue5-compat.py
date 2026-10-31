@@ -31,15 +31,15 @@ fn complete_layouts_only() {
 }
 '''
 text=(SOURCE/'crates/glue5/src/touch.rs').read_text()
-expr=re.search(r'self\.pos\(b\.at\)\.distance\(p\) <= ([^\n]+)',text)[1]
-expr=expr.replace('b.radius','radius').replace('self.scale','scale')
-touch='fn target(radius:f32,scale:f32)->f32 { '+expr+' }\n'+'''
+expr=re.search(r'self\.(?:pos\(b\.at\)|button_pos\(b\))\.distance\(p\) <= ([^\n]+)',text)[1]
+expr=expr.replace('self.button_radius(b)','(radius * scale)').replace('b.radius','radius').replace('self.scale','scale').replace('self.deck','deck')
+touch='fn target(radius:f32,scale:f32,deck:bool)->f32 { '+expr+' }\n'+'''
 #[test]
 fn usable_small_button_targets() {
  for scale in [0.4,0.82,1.0,1.5] {for radius in [18.0,20.0,22.0,25.0,28.0] {
-  assert!(target(radius,scale)*2.0>=44.0);
+  assert!(target(radius,scale,false)*2.0>=44.0);
  }}
- assert_eq!(target(28.0,1.0),35.0);
+ assert_eq!(target(28.0,1.0,false),35.0);
 }
 '''
 for name,code in [('layout',layout),('touch-target',touch)]:

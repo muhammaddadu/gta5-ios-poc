@@ -12,6 +12,9 @@ phone transfer and native gameplay validation.
 
 The **[Glue 5 app upgrade](docs/GLUE5_UPGRADE.md)** integrates improved mobile controls,
 settings, upscaling and frame pacing while retaining the existing app data.
+For the new folding phone, see [iPhone Duo setup and validation](docs/IPHONE_DUO.md).
+Duo candidate **1.1 build 4** is prepared locally; device registration, installation
+and physical validation remain pending.
 
 Everything for this workspace lives under this directory. Private inputs,
 third-party checkouts and outputs live under ignored `.local/`. Only original

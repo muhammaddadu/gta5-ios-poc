@@ -10,6 +10,10 @@ remain ignored under `.local/`.
 
 ## Features and mobile defaults
 
+- The Duo adapter adds a separate portrait touch deck and full-window landscape
+  play, with live scene resizing. New mobile defaults are 30 FPS and 80% control
+  opacity; low-memory mode caps scene workload near 1.5 million pixels. These are
+  starting settings, not a measured optimum for the Duo.
 - Home-screen mode selection: Story, Playground on the GTA V map, and Playground
   on the test map. The selection is remembered; reopen the app to change modes.
 - Virtual gamepad touch controls: analog movement/camera, controller prompts and
@@ -29,6 +33,9 @@ Settings remain adjustable. These defaults target the tested iPhone 15 Pro and
 avoid assuming a peak frame-rate sample is sustainable. Graphics quality and
 sustained performance still require longer testing. The owner confirmed updated
 world rendering, touch controls, sound and Settings on the phone.
+
+For Duo prerequisites, window resizing and the new-phone workflow, see
+[IPHONE_DUO.md](IPHONE_DUO.md).
 
 ## Existing data and saves
 
@@ -113,7 +120,7 @@ Do not delete or overwrite save files automatically if either runtime rejects th
 
 ## Validation records
 
-- All 16 repository tests pass, including adapter idempotence/drift checks.
+- All 17 repository tests pass, including adapter idempotence/drift checks.
 - `python3 scripts/test-glue5-compat.py` runs Rust tests against the actual modified layout module; it verifies
   modern and legacy folders and rejects a missing data manifest.
 - iPhone ARM64 runtime compilation passed after correcting SDL's borrowed-path

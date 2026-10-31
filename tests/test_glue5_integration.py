@@ -50,7 +50,7 @@ class IntegrationTest(unittest.TestCase):
             result=(ios/'project.poc.yml').read_text()
             self.assertIn('CFBundleShortVersionString: $(MARKETING_VERSION)',result)
             self.assertIn('CFBundleVersion: $(CURRENT_PROJECT_VERSION)',result)
-            self.assertIn('CURRENT_PROJECT_VERSION: 3',result)
+            self.assertIn('CURRENT_PROJECT_VERSION: 4',result)
             self.assertIn('MARKETING_VERSION: 1.1',result)
 
     def test_all_modes_reach_engine_and_patch_is_idempotent(self):
@@ -70,3 +70,15 @@ class IntegrationTest(unittest.TestCase):
             self.assertIn('start_mode: s.start_mode.clamp(1, 3)',first['app.rs'])
             self.assertIn('(1, "Story"), (2, "Playground · GTA V"), (3, "Playground · Test map")',first['ui/pages.rs'])
             self.assertIn('pub start_mode: u32',first['settings.rs'])
+
+    def test_mobile_resize_clears_input_and_keeps_launch_scale(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);path=root/'crates/glue5/src/app.rs';path.parent.mkdir(parents=True)
+            path.write_text('if MOBILE || w == 0 || h == 0 {\nreturn;\n}\nlet size = settings::render_size((w, h), self.settings.render_scale(), game.started.low_memory);\n            input.resize(size.0, size.1);')
+            integration.patch_resizing(root)
+            first=path.read_text();integration.patch_resizing(root)
+            self.assertEqual(first,path.read_text())
+            self.assertIn('if w == 0 || h == 0 {',first)
+            self.assertIn('if MOBILE { game.started.render_scale }',first)
+            self.assertLess(first.index('input.release_all()'),first.index('input.resize('))
+            self.assertIn('self.touch.clear()',first)

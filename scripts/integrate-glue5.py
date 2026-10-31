@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse
 import json
 import re
+import runpy
 import shutil
 import struct
 import zlib
@@ -96,6 +97,8 @@ def patch_modes(root):
     """Restore the engine's three launch choices omitted by the pinned host."""
     def replace(path, old, new):
         text = path.read_text()
+        if path.name == 'pages.rs' and 'GTA_POC_HOME' in text:
+            return
         if new in text:
             return
         if text.count(old) != 1:
@@ -125,6 +128,36 @@ def patch_modes(root):
             '// GTA_POC_MODES: the home selection supplies the engine launch mode.\n')
 
 
+
+def patch_resizing(root):
+    """Let mobile render targets follow fold/unfold window changes safely."""
+    path = root / 'crates/glue5/src/app.rs'
+    text = path.read_text()
+    marker = 'GTA_POC_RESIZE'
+    if marker in text:
+        return
+    old = 'if MOBILE || w == 0 || h == 0 {'
+    if text.count(old) != 1:
+        raise ValueError('Expected one mobile resize guard')
+    text = text.replace(old, 'if w == 0 || h == 0 {')
+    old = 'let size = settings::render_size((w, h), self.settings.render_scale(), game.started.low_memory);'
+    if text.count(old) != 1:
+        raise ValueError('Expected one render resize calculation')
+    text = text.replace(old, '// GTA_POC_RESIZE: mobile windows can resize when the device folds.\n'
+        '        // Preserve mobile next-launch graphics settings while following the live window.\n'
+        '        let scale = if MOBILE { game.started.render_scale } else { self.settings.render_scale() };\n'
+        '        let size = settings::render_size((w, h), scale, game.started.low_memory);')
+    old = '            input.resize(size.0, size.1);'
+    if text.count(old) != 1:
+        raise ValueError('Expected one engine resize submission')
+    text = text.replace(old, '            input.release_all();\n'
+        '            self.touch.clear();\n'
+        '            glue5_runtime::input::set_gamepad(0, Gamepad::default());\n'+old)
+    text = text.replace('Phone windows never change size; their back\n    /// buffer is the one they started with.',
+                        'Mobile windows also resize across display transitions.')
+    path.write_text(text)
+
+
 def project(root, team, bundle):
     if not re.fullmatch(r'[A-Z0-9]{10}', team):
         raise ValueError('Invalid Team ID')
@@ -133,7 +166,7 @@ def project(root, team, bundle):
     source = (root / 'platform/ios/project.yml').read_text()
     for key, value in [('PRODUCT_NAME', 'GTA'), ('PRODUCT_BUNDLE_IDENTIFIER', bundle),
                        ('DEVELOPMENT_TEAM', team), ('CFBundleDisplayName', 'GTA V'),
-                       ('CURRENT_PROJECT_VERSION', '3'), ('MARKETING_VERSION', '1.1'), ('ASSETCATALOG_COMPILER_APPICON_NAME', 'AppIcon')]:
+                       ('CURRENT_PROJECT_VERSION', '4'), ('MARKETING_VERSION', '1.1'), ('ASSETCATALOG_COMPILER_APPICON_NAME', 'AppIcon')]:
         source, count = re.subn(r'(?m)^(\s*'+key+r':)\s*[^\n]+', lambda m: m[1]+' '+value, source)
         if count != 1:
             raise ValueError('Expected one project setting: '+key)
@@ -169,5 +202,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
     patch(args.root)
     patch_modes(args.root)
+    patch_resizing(args.root)
     project(args.root, args.team, args.bundle)
+    handheld = runpy.run_path(str(PROJECT/'scripts/duo_ui.py'))
+    handheld['patch'](args.root)
+    handheld['patch_home'](args.root)
+    handheld['patch_input_safety'](args.root)
+    handheld['patch_settings_targets'](args.root)
+    handheld['patch_settings_scroll_tests'](args.root)
+    handheld['add_settings_target_tests'](args.root)
     print('Applied app identity, existing game/save layout, and conservative iOS defaults.')
