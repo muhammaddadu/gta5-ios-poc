@@ -124,5 +124,6 @@ preserved. No game inputs, generated code, fonts, builds or screenshots are stag
 Final native-vector review captures remain private under `.local/` with the
 `duo-native-` prefix. The prepared build is version 1.1 build 4. Its development
 profile still needs the Duo registered. The owner has reconnected it; developer
-support works, but registration requires signing back into Xcode after the upgrade.
+support and account sign-in work, but Apple rejects registration because the
+selected team has reached its iPhone device limit.
 All physical fold, comfort, sustained performance and gameplay results remain pending.

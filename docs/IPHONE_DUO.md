@@ -124,8 +124,11 @@ profile that **does not include the Duo**. Reconnect the intended phone and run
 the targeted build command above to register it and refresh signing. The app and
 external data transfer then remain necessary; possession of the IPA alone does
 not install or validate the game. The phone has since been reconnected and developer support verified, but the
-first targeted signing attempt stopped at `No Accounts`; registration and
-installation are awaiting local Xcode account sign-in.
+initial `No Accounts` error was resolved by signing back in. Apple then rejected
+registration because the team has reached its registered-iPhone limit; Xcode
+currently shows a Personal Team. No Duo installation or data transfer has occurred.
+Resolve the account's membership/capacity, or choose another authorised team, then
+retry the targeted build. See [current status](GLUE5_UPGRADE_STATUS.md).
 
 After `python3 scripts/preview-duo.py --build-only`, run actual native UI/input tests
 without a phone using:

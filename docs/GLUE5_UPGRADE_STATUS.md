@@ -29,13 +29,23 @@ Checks passed:
 - Native control/page vector output inspected at portrait/landscape/compact sizes.
   Preview scenes are synthetic and are not gameplay evidence.
 
-**Duo installation is in progress.** The intended phone has been reconnected;
-Developer Mode and Xcode 27.2 developer disk image services are available. Its
-UDID is not in the current development profile. The targeted `DEVICE_ID` build
-compiled successfully, then provisioning stopped with `No Accounts`: Xcode has
-no signed-in Apple account after the upgrade. Local account sign-in is required
-before registration, refreshed export and installation. The prepared IPA must
-not be described as already provisioned for that phone.
+**Duo installation is blocked by Apple's device-registration quota.** The intended
+phone is connected, with Developer Mode and Xcode 27.2 developer disk image
+services available. The owner signed back into the intended Apple account and
+Xcode confirms it, resolving the earlier `No Accounts` failure. The targeted
+build compiles, then Apple rejects provisioning with:
+`Your development team has reached the maximum number of registered iPhone devices.`
+Xcode currently exposes only a Personal Team for this account. The existing
+profile excludes the Duo, so no install or game-data transfer was attempted.
+
+The owner must resolve membership/capacity on the intended account, or select a
+different authorised signing team with capacity, before a fresh targeted build
+and export. Account/team changes may require a new bundle identifier; preserve
+any existing populated container and saves. Apple explains
+[personal-team membership](https://developer.apple.com/help/account/basics/about-your-developer-account)
+and [registered-device limits](https://developer.apple.com/help/account/devices/devices-overview/).
+For program teams, disabling an old device does not free an annual slot.
+The prepared IPA is not provisioned for this phone.
 
 Physical fold transitions, thumb comfort, sustained FPS/temperature, actual Duo
 gameplay and save/reload still require the phone. No such results are claimed.
