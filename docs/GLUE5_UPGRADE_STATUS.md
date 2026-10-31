@@ -47,6 +47,17 @@ and [registered-device limits](https://developer.apple.com/help/account/devices/
 For program teams, disabling an old device does not free an annual slot.
 The prepared IPA is not provisioned for this phone.
 
+The owner subsequently completed the one-year membership purchase in Arc. The
+order confirmation was observed, but the signed-in developer portal still reports
+that the selected team has no eligible program membership. A fresh targeted
+registration attempt after purchase still returns the same device-limit error.
+Purchase confirmation therefore does not yet establish active signing access.
+Wait for Apple's membership activation/confirmation before retrying; do not
+repeat the purchase. Apple advises contacting support if membership confirmation
+has not arrived within 24 hours of purchase:
+[enrolment confirmation](https://developer.apple.com/help/account/membership/program-enrollment).
+No installation or game-data transfer has taken place on the Duo.
+
 Physical fold transitions, thumb comfort, sustained FPS/temperature, actual Duo
 gameplay and save/reload still require the phone. No such results are claimed.
 The earlier confirmed gameplay below applies to the original iPhone and older
