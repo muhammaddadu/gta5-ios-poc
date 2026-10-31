@@ -1,11 +1,11 @@
-# Duo build prepared — 31 October 2026
+# Duo build installed — 31 October 2026
 
 Version **1.1, build 4** compiled for iPhone ARM64, archived, development-signed
 and exported using **Xcode 27.2 / iOS SDK 27.2** on macOS 27.2. Both the archive
 and the app extracted from the IPA passed strict signature verification. The
 exported ZIP passed integrity validation.
 
-Private prepared output: `.local/dist/duo/GTA-Duo-1.1-build4.ipa` (40,578,175 bytes).
+Private prepared output: `.local/dist/duo/GTA-Duo-1.1-build4.ipa` (40,578,264 bytes).
 The standard latest output is `.local/dist/glue5/export/GTA.ipa`. The original
 baseline IPA remains `.local/dist/export/GTA.ipa`.
 
@@ -29,40 +29,31 @@ Checks passed:
 - Native control/page vector output inspected at portrait/landscape/compact sizes.
   Preview scenes are synthetic and are not gameplay evidence.
 
-**Duo installation is blocked by Apple's device-registration quota.** The intended
-phone is connected, with Developer Mode and Xcode 27.2 developer disk image
-services available. The owner signed back into the intended Apple account and
-Xcode confirms it, resolving the earlier `No Accounts` failure. The targeted
-build compiles, then Apple rejects provisioning with:
-`Your development team has reached the maximum number of registered iPhone devices.`
-Xcode currently exposes only a Personal Team for this account. The existing
-profile excludes the Duo, so no install or game-data transfer was attempted.
+**Signing and installation succeeded.** The intended Duo is registered under the
+same Apple team and app identity. Both archived and exported provisioning profiles
+include it. The app is installed and both external folders are fully transferred.
+The remote inventory matches 5,817 data files (20,945,061,654 bytes) and 6,615
+shaders (144,792,037 bytes), with no extra files. This checks paths/sizes; remote
+hashes were not read back. iOS denied the launch because the phone had locked
+during transfer. The owner must unlock/open the app for gameplay and display checks.
 
-The owner must resolve membership/capacity on the intended account, or select a
-different authorised signing team with capacity, before a fresh targeted build
-and export. Account/team changes may require a new bundle identifier; preserve
-any existing populated container and saves. Apple explains
-[personal-team membership](https://developer.apple.com/help/account/basics/about-your-developer-account)
-and [registered-device limits](https://developer.apple.com/help/account/devices/devices-overview/).
-For program teams, disabling an old device does not free an annual slot.
-The prepared IPA is not provisioned for this phone.
+The earlier `No Accounts` failure was resolved by signing into Xcode locally.
+Apple then rejected registration with its registered-iPhone quota error. The owner
+completed a one-year membership purchase; the first retry still failed while the
+portal reported no eligible membership. A later fresh targeted build succeeded,
+with a new profile valid through 31 October 2027. Purchase confirmation and portal
+caching alone were insufficient: the successful targeted build and profile
+inclusion established signing readiness. No duplicate membership purchase was made.
 
-The owner subsequently completed the one-year membership purchase in Arc. The
-order confirmation was observed, but the signed-in developer portal still reports
-that the selected team has no eligible program membership. A fresh targeted
-registration attempt after purchase still returns the same device-limit error.
-Purchase confirmation therefore does not yet establish active signing access.
-Wait for Apple's membership activation/confirmation before retrying; do not
-repeat the purchase. Apple advises contacting support if membership confirmation
-has not arrived within 24 hours of purchase:
-[enrolment confirmation](https://developer.apple.com/help/account/membership/program-enrollment).
-No installation or game-data transfer has taken place on the Duo.
+For reproducibility, confirm account sign-in, use `DEVICE_ID` in the build helper,
+and verify profile inclusion before installation. Apple documents
+[personal-team membership](https://developer.apple.com/help/account/basics/about-your-developer-account),
+[registered-device limits](https://developer.apple.com/help/account/devices/devices-overview/)
+and [enrolment confirmation](https://developer.apple.com/help/account/membership/program-enrollment).
 
 Physical fold transitions, thumb comfort, sustained FPS/temperature, actual Duo
-gameplay and save/reload still require the phone. No such results are claimed.
-The earlier confirmed gameplay below applies to the original iPhone and older
-build, not the new Duo candidate. No phone assets were changed in this preparation.
-
+gameplay and save/reload remain unverified. Earlier confirmed gameplay below
+applies to the original iPhone and older build.
 See [Duo experience and review](DUO_EXPERIENCE.md) and [Duo setup](IPHONE_DUO.md).
 
 ---

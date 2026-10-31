@@ -117,19 +117,20 @@ Stop the preview with Ctrl+C. The original Chrome game server stays stopped.
 
 ## Prepared local candidate
 
-Version 1.1 build 4 was compiled, archived and exported on 31 October 2026.
-The local named copy is `.local/dist/duo/GTA-Duo-1.1-build4.ipa`; its manifest,
-checksum and signing status are beside it. The build currently uses a development
-profile that **does not include the Duo**. Reconnect the intended phone and run
-the targeted build command above to register it and refresh signing. The app and
-external data transfer then remain necessary; possession of the IPA alone does
-not install or validate the game. The phone has since been reconnected and developer support verified, but the
-initial `No Accounts` error was resolved by signing back in. Apple then rejected
-registration because the team has reached its registered-iPhone limit; Xcode
-currently shows a Personal Team. No Duo installation or data transfer has occurred.
-Resolve the account's membership/capacity, or choose another authorised team, then
-retry the targeted build. See [current status](GLUE5_UPGRADE_STATUS.md).
+Version 1.1 build 4 was compiled, archived, exported and installed on the Duo on
+31 October 2026. The local named copy is
+`.local/dist/duo/GTA-Duo-1.1-build4.ipa`; its manifest, checksum and signing status
+are beside it. Both the archive and exported IPA profiles include the intended
+phone. All external data/shader paths and sizes are verified on the device.
+The first launch attempt was denied because the phone was locked; unlock it and
+open GTA. Physical gameplay and fold/rotation checks remain pending.
 
+After upgrading the Mac/Xcode, local account sign-in resolved `No Accounts`.
+Registration then hit Apple's iPhone quota. The owner purchased the paid membership;
+its initial activation delay required a later retry. That targeted build succeeded
+with the same team and bundle identifier. Verify actual profile inclusion rather
+than relying on the order confirmation or a generic archive. See
+[current status](GLUE5_UPGRADE_STATUS.md).
 After `python3 scripts/preview-duo.py --build-only`, run actual native UI/input tests
 without a phone using:
 

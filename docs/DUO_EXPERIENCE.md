@@ -122,8 +122,7 @@ source; repeat application is byte-idempotent. The original baseline app/IPA is
 preserved. No game inputs, generated code, fonts, builds or screenshots are staged.
 
 Final native-vector review captures remain private under `.local/` with the
-`duo-native-` prefix. The prepared build is version 1.1 build 4. Its development
-profile still needs the Duo registered. The owner has reconnected it; developer
-support and account sign-in work, but Apple rejects registration because the
-selected team has reached its iPhone device limit.
-All physical fold, comfort, sustained performance and gameplay results remain pending.
+`duo-native-` prefix. Version 1.1 build 4 is signed for and installed on the intended
+Duo. All external data/shader paths and sizes match the local files. Launch was
+blocked by the phone lock; the owner has been asked to open it. Physical fold, comfort,
+sustained performance and gameplay results remain pending.
